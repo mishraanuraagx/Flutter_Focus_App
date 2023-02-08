@@ -51,7 +51,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
+  var selectedIndex = 2;
   @override
   Widget build(BuildContext context) {
     Widget page;
@@ -61,6 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       case 1:
         page = Favorites();
+        break;
+      case 2:
+        page = StringGenerator();
         break;
       default:
         throw UnimplementedError('No widget for $selectedIndex');
@@ -82,6 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.favorite),
                     label: Text('Favorites'),
                   ),
+                  NavigationRailDestination(
+                      icon: Icon(Icons.saved_search), label: Text('Generator'))
                 ],
                 selectedIndex: selectedIndex,
                 onDestinationSelected: (value) {
@@ -178,7 +183,6 @@ class Favorites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var list = appState.favorites;
     if (appState.favorites.isEmpty) {
       return Center(
         child: Text('No favorites yet.'),
@@ -201,6 +205,60 @@ class Favorites extends StatelessWidget {
           // list.map((e) => Text(e.asLowerCase)).toList(),
         ],
       ),
+    );
+  }
+}
+
+class StringGenerator extends StatefulWidget {
+  @override
+  State<StringGenerator> createState() => _StringGeneratorState();
+}
+
+class _StringGeneratorState extends State<StringGenerator> {
+  var order = '';
+  static const IconData refresh = IconData(0xe514, fontFamily: 'MaterialIcons');
+  void shuffleList() {
+    var list = <int>[1, 2, 3, 4, 5];
+    list.shuffle();
+    order = list.join('->').toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var style = DefaultTextStyle.of(context)
+        .style
+        .apply(fontSizeFactor: 1, fontSizeDelta: 2, fontWeightDelta: 2);
+    shuffleList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(
+                'Hades Dungeon selector:  ' + order,
+                style: style,
+              ),
+              SizedBox(width: 25),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    shuffleList();
+                  });
+                },
+                child: Icon(refresh),
+              ),
+            ],
+          ),
+        ),
+
+        // list.map((e) => Text(e.asLowerCase)).toList(),
+      ],
     );
   }
 }
